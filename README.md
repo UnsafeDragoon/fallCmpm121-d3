@@ -1,3 +1,5 @@
+A game about an astronaut who is stranded on an alien planet with their broken spaceship. They need to collect materials and fuel in order to rebuild their thruster and get off the planet.
+
 # D3 starter
 
 A walking skeleton: one thin slice of a game that works from end to end. The player moves gridwise over a big seeded world, with a game core that knows nothing about Phaser and a Phaser client that presents what the core reports. Assignment instructions are on Canvas.
