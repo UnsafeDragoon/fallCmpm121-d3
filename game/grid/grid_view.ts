@@ -75,6 +75,8 @@ export class GridView extends Phaser.Scene {
     );
   }
 
+  private collectedTiles: Record<string, boolean> = {};
+
   show(event: GameEvent): Promise<void> {
     switch (event.type) {
       case "moved":
@@ -82,6 +84,12 @@ export class GridView extends Phaser.Scene {
         return this.walk(event.to);
       case "blocked":
         return this.bump(event.at, event.toward);
+      case "gather":
+        this.collectedTiles[`${event.at.x}.${event.at.y}`] = true;
+        this.drawCellsAround(event.at);
+        return this.bump(event.at, event.at);
+      case "failed-gather":
+        return this.bump(event.at, event.at);
       default:
         // A new event type fails to type-check here until it has a presentation.
         event satisfies never;
@@ -126,7 +134,15 @@ export class GridView extends Phaser.Scene {
     this.ground.clear();
     for (let y = centerY - CELLS_DOWN; y <= centerY + CELLS_DOWN; y++) {
       for (let x = centerX - CELLS_ACROSS; x <= centerX + CELLS_ACROSS; x++) {
-        this.ground.fillStyle(TERRAIN_COLORS[terrainAt(this.seed, x, y)]);
+        const tileKey = `${x}.${y}`;
+        let color: number;
+        if (this.collectedTiles[tileKey]) {
+          color = 0xB58A8A;
+        } else {
+          color = TERRAIN_COLORS[terrainAt(this.seed, x, y)];
+        }
+
+        this.ground.fillStyle(color);
         this.ground.fillRect(
           x * CELL_SIZE,
           y * CELL_SIZE,

@@ -7,6 +7,11 @@ const ARROWS: Record<string, Direction> = {
   ArrowDown: "south",
   ArrowLeft: "west",
   ArrowRight: "east",
+
+  w: "north",
+  s: "south",
+  a: "west",
+  d: "east",
 };
 
 // Input in, core in the middle, presenter out. None of those three knows the others,
@@ -37,6 +42,15 @@ export class Controller {
   }
 
   private keyDown(event: KeyboardEvent) {
+    if (event.key == "e") {
+      if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) {
+        return;
+      }
+      this.pressed = { type: "gather" };
+      this.next();
+      return;
+    }
+
     const direction = ARROWS[event.key];
     if (!direction || event.ctrlKey || event.metaKey || event.altKey) return;
     // Otherwise arrow keys would also scroll the page.

@@ -3,6 +3,13 @@
 
 export type Terrain = "grass" | "forest" | "water" | "rock";
 
+export const TerrainResource: Record<string, string> = {
+  grass: "dirt",
+  forest: "wood",
+  water: "water",
+  rock: "stone",
+};
+
 export function terrainAt(seed: number, x: number, y: number): Terrain {
   const raw = 0.65 * noise(seed, x, y, 9) + 0.35 * noise(seed + 1, x, y, 3);
   // Every game starts at the origin, so flatten the land there. Otherwise some
