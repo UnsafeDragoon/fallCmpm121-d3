@@ -16,6 +16,7 @@ function besideEasternCell(passable: boolean): GameState {
         player: { x, y: 0 },
         inventory: { dirt: 0, wood: 0, water: 0, stone: 0 },
         collectedTiles: {},
+        winCond: false,
       };
     }
   }

@@ -5,6 +5,41 @@ body {
   color: #e8e4da;
   font: 14px system-ui, sans-serif;
 }
+#winBanner {
+  background-color: #321536c4;
+  width: 600px;
+  height: 500px;
+  position: absolute;
+  margin-left: 100px;
+  margin-top: 50px;
+  z-index: 10;
+  border-radius: 50px;
+  border-color: rgb(0, 253, 76);
+  border-width: 3px;
+  border-style: groove;
+  display: flex;
+  flex-direction: column;
+}
+
+#winBanner[hidden] {
+  display: none;
+}
+
+#winBanner h1 {
+  color: #01ccff;
+  margin: 40px auto 0 auto;
+  font-size: 64px;
+  font-family: "Science Gothic";
+}
+
+#winBanner p {
+  color: #5edcfc;
+  margin: 40px auto 0 auto;
+  width: 70%;
+  font-family: "Science Gothic";
+  font-size: 25px;
+  text-align: center;
+}
 
 #app {
   display: flex;

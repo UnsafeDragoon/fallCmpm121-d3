@@ -1,3 +1,5 @@
+export const CAPSTONE_RECIPE = "thruster";
+
 export type RecipeRow = {
   inputs: Record<string, number>;
   outputs: Record<string, number>;

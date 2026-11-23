@@ -30,7 +30,7 @@ Deno.test("gathering from forest adds wood to inventory", () => {
     resource: "wood",
     quantity: 1,
     at: state.player,
-    inventory: { dirt: 0, wood: 1, water: 0, stone: 0 },
+    inventory: { goop: 0, wood: 1, silver: 0, stone: 0 },
   }]);
 });
 
@@ -89,6 +89,6 @@ Deno.test("event keeps its cells while state moves on", () => {
     resource: "wood",
     quantity: 1,
     at: keptEvent.at,
-    inventory: { dirt: 0, wood: 1, water: 0, stone: 0 },
+    inventory: { goop: 0, wood: 1, silver: 0, stone: 0 },
   });
 });

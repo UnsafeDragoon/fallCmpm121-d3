@@ -19,7 +19,7 @@ function describe(event: GameEvent): string {
     case "gather":
       return `Gathered ${event.quantity} ${event.resource} at {${event.at.x}, ${event.at.y}}`;
     case "failed-gather":
-      return `Did not gather from {${event.at.x}, ${event.at.y}}. ${event.msg}`;
+      return `${event.msg}`;
     case "craft":
       return `Crafted ${event.recipe}`;
     case "failed-craft": {
@@ -27,6 +27,13 @@ function describe(event: GameEvent): string {
         `${v} ${k}`
       ).join(", ");
       return `Failed to craft ${event.recipe}. Missing: ${missingStr}`;
+    }
+    case "beat-game": {
+      const winBanner = document.getElementById("winBanner");
+      if (winBanner?.hidden) {
+        winBanner.hidden = false;
+      }
+      return `${event.msg}`;
     }
   }
 }

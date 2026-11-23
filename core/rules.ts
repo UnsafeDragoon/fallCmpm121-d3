@@ -8,7 +8,7 @@ import {
   terrainAt,
   TerrainDrops,
 } from "./terrain.ts";
-import { type RecipeRow, RECIPES } from "./recipes.ts";
+import { CAPSTONE_RECIPE, type RecipeRow, RECIPES } from "./recipes.ts";
 
 export type Cell = { x: number; y: number };
 
@@ -21,6 +21,7 @@ export type GameState = {
   player: Cell;
   inventory: Record<string, number>;
   collectedTiles: Record<string, boolean>;
+  winCond: boolean;
 };
 
 // Command: https://gameprogrammingpatterns.com/command.html
@@ -65,6 +66,11 @@ export type GameEvent =
     type: "failed-craft";
     recipe: string;
     missing: Record<string, number>;
+  }
+  | {
+    type: "beat-game";
+    msg:
+      "You crafted the thrusters and repaired the rocketship. With the help of local goo, you have enough fuel to make the journey back home. You win!";
   };
 
 const STEPS: Record<Direction, Cell> = {
@@ -79,13 +85,17 @@ export function newGame(seed: number): GameState {
   return {
     seed,
     player: { x: 0, y: 0 },
-    inventory: { dirt: 0, wood: 0, water: 0, stone: 0 },
+    inventory: { silver: 0, wood: 0, goop: 0, stone: 0 },
     collectedTiles: {},
+    winCond: false,
   };
 }
 
 // The single way in. It updates the state it is given and returns the events.
 export function apply(state: GameState, command: Command): GameEvent[] {
+  if (state.winCond) {
+    return [];
+  }
   switch (command.type) {
     case "move":
       return move(state, command.direction);
@@ -193,10 +203,22 @@ function craft(state: GameState, recipeName: string): GameEvent[] {
     state.inventory[item] = (state.inventory[item] || 0) + amount;
   }
 
-  return [{
+  const events: GameEvent[] = [{
     type: "craft",
     recipe: recipeName,
     outputs: recipe.outputs,
     inventory: { ...state.inventory },
   }];
+
+  if (recipeName === CAPSTONE_RECIPE) {
+    state.winCond = true;
+
+    events.push({
+      type: "beat-game",
+      msg:
+        "You crafted the thrusters and repaired the rocketship. With the help of local goo, you have enough fuel to make the journey back home. You win!",
+    });
+  }
+
+  return events;
 }
