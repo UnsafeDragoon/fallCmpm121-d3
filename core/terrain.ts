@@ -3,7 +3,9 @@
 
 export type Terrain = "grass" | "forest" | "water" | "rock";
 
-export const TerrainResource: Record<string, string> = {
+export type Resources = "dirt" | "wood" | "water" | "stone";
+
+export const TerrainResource: Record<Terrain, Resources> = {
   grass: "dirt",
   forest: "wood",
   water: "water",

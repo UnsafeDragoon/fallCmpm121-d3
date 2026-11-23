@@ -1,4 +1,9 @@
-import { type GameEvent, type GameState, terrainAt } from "../core/mod.ts";
+import {
+  type GameEvent,
+  type GameState,
+  Resources,
+  terrainAt,
+} from "../core/mod.ts";
 
 function element(id: string): HTMLElement {
   return document.getElementById(id)!;
@@ -30,10 +35,35 @@ export class Hud {
   show(event: GameEvent) {
     element("live").textContent = describe(event);
     if (event.type === "moved") this.showPosition(event.to.x, event.to.y);
+    if (event.type === "gather") {
+      this.updateInventory(event.resource, event.inventory);
+    }
   }
 
   private showPosition(x: number, y: number) {
     element("position").textContent = `${x}, ${y}`;
     element("terrain").textContent = terrainAt(this.seed, x, y);
+  }
+
+  private updateInventory(resource: Resources, inv: Record<Resources, number>) {
+    const invUI = element("inventory");
+    if (!invUI) {
+      throw new Error("Error: Unable to retrive inventory HTML element.");
+    }
+
+    const itemList = Array.from(invUI.querySelectorAll<HTMLLIElement>("li"));
+
+    const filtered = itemList.filter((li) => li.dataset.resource === resource);
+    const foundItem = filtered[0];
+
+    if (!foundItem) {
+      const newItem = document.createElement("li");
+      newItem.dataset.resource = resource;
+      newItem.innerText = `${resource}: ${inv[resource]}`;
+      invUI.append(newItem);
+      return;
+    }
+
+    foundItem.innerText = `${resource}: ${inv[resource]}`;
   }
 }

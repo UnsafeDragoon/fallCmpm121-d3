@@ -4,6 +4,7 @@
 
 import {
   isPassable,
+  Resources,
   type Terrain,
   terrainAt,
   TerrainResource,
@@ -36,7 +37,13 @@ export type Command =
 export type GameEvent =
   | { type: "moved"; from: Cell; to: Cell }
   | { type: "blocked"; at: Cell; toward: Cell; terrain: Terrain }
-  | { type: "gather"; resource: string; quantity: number; at: Cell }
+  | {
+    type: "gather";
+    resource: Resources;
+    quantity: number;
+    at: Cell;
+    inventory: Record<string, number>;
+  }
   | {
     type: "failed-gather";
     msg:
@@ -90,7 +97,7 @@ function move(state: GameState, direction: Direction): GameEvent[] {
 }
 
 function gather(state: GameState): GameEvent[] {
-  const player = state.player;
+  const player = { ...state.player };
   const tileKey = `${player.x}.${player.y}`;
 
   if (state.collectedTiles[tileKey]) {
@@ -120,5 +127,6 @@ function gather(state: GameState): GameEvent[] {
     resource: gatheredResource,
     quantity: 1,
     at: player,
+    inventory: { ...state.inventory },
   }];
 }

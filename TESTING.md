@@ -21,3 +21,5 @@ For a person, or an agent driving a browser. Run `deno task dev` and open the lo
 | 13 | Tab to the sound button and press Space                   | It toggles. Arrow keys still move the marker.                                                                                                               |
 | 14 | Listen while walking and bumping (headphones or speakers) | A soft tick on each step, and a low buzz on each bump. **This is the only check that a person can hear them.**                                              |
 | 15 | On a high-resolution display, or at browser zoom 200%     | Grid edges stay sharp. The marker stays centered. Run `document.querySelector("canvas").width`: it is the canvas `clientWidth` times `devicePixelRatio`.    |
+
+| 16 | Gathering (visual and audio) | Plays a beep-like chime after you press 'e' over a non-grayed resource tile. Newly aquired resources pop up on the right hand side while known resources increment.

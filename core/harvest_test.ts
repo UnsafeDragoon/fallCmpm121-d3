@@ -1,5 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { apply, newGame, type Terrain, terrainAt } from "./mod.ts";
+import { GameEvent } from "./rules.ts";
 
 const SEED = 121;
 
@@ -29,6 +30,7 @@ Deno.test("gathering from forest adds wood to inventory", () => {
     resource: "wood",
     quantity: 1,
     at: state.player,
+    inventory: { dirt: 0, wood: 1, water: 0, stone: 0 },
   }]);
 });
 
@@ -60,4 +62,33 @@ Deno.test("a failed gather changes nothing", () => {
 
   assertEquals(state, snapshot);
   assertEquals(events[0].type, "failed-gather");
+});
+
+Deno.test("event keeps its cells while state moves on", () => {
+  const state = newGame(SEED);
+  state.player = cellOfTerrain("forest");
+
+  const events = apply(state, { type: "gather" });
+
+  const keptEvent: GameEvent = events[0];
+  if (keptEvent.type != "gather") {
+    throw new Error(
+      "Failure: Event snapshot failed to register correct event 'gather'.",
+    );
+  }
+
+  assertEquals(state.inventory.wood, 1);
+
+  state.player = cellOfTerrain("rock");
+  apply(state, { type: "gather" });
+
+  assertEquals(state.inventory.stone, 1);
+
+  assertEquals(keptEvent, {
+    type: "gather",
+    resource: "wood",
+    quantity: 1,
+    at: keptEvent.at,
+    inventory: { dirt: 0, wood: 1, water: 0, stone: 0 },
+  });
 });
