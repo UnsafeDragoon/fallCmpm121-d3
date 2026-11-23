@@ -54,3 +54,18 @@ Deno.test("all recipe inputs can be gathered/crafted", () => {
     }
   }
 });
+
+Deno.test("crafted event retains its own copy of the inventory", () => {
+  const state = newGame(123);
+  state.inventory.wood = 2;
+
+  const events1 = apply(state, { type: "craft", recipe: "wooden_plank" });
+  assertEquals(events1[0].type, "craft");
+
+  if (events1[0].type === "craft") {
+    const pastInventory = events1[0].inventory;
+    apply(state, { type: "craft", recipe: "wooden_plank" });
+    assertEquals(pastInventory.wood, 1);
+    assertEquals(state.inventory.wood, 0);
+  }
+});

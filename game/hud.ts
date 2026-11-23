@@ -9,6 +9,12 @@ function describe(event: GameEvent): string {
     case "moved":
       return `Moved to {${event.to.x}, ${event.to.y}}`;
     case "blocked":
+      if (event.terrain === "mountain") {
+        return `Blocked by mountain at {${event.toward.x}, ${event.toward.y}}. Needs pickaxe.`;
+      }
+      if (event.terrain === "swamp") {
+        return `Blocked by swamp at {${event.toward.x}, ${event.toward.y}}. Needs bucket.`;
+      }
       return `Blocked by ${event.terrain} at {${event.toward.x}, ${event.toward.y}}`;
     case "gather":
       return `Gathered ${event.quantity} ${event.resource} at {${event.at.x}, ${event.at.y}}`;
