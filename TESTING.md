@@ -24,6 +24,11 @@ For a person, or an agent driving a browser. Run `deno task dev` and open the lo
 
 | 16 | Gathering (visual and audio) | Plays a beep-like chime after you press 'e' over a non-grayed resource tile. Newly aquired resources pop up on the right hand side while known resources increment.
 | 17 | Gather items and look at the recipe list | The recipe buttons update to show missing requirements. When you have enough materials, the button changes to "Craft [item]". |
-| 18 | Click a craftable recipe button | The marker bumps, a buzzsaw sound plays, the item appears in the inventory, and inputs are deducted. `#live` reports success. |
-| 19 | Click a recipe with missing items | The marker flashes red, a bump sound plays, and `#live` reports the missing items. |
+| 18 | Click a craftable recipe button | The marker bumps, a buzzsaw sound plays, the item appears in the inventory, and inputs are deducted. #live reports success. |
+| 19 | Click a recipe with missing items | The marker flashes red, a bump sound plays, and #live reports the missing items. |
 | 20 | Click a recipe button, then use arrows | The marker moves. The button successfully yielded keyboard focus back to the page. |
+| 21 | Walk into a mountain without a pickaxe | The marker flashes red and bumps. #live says you are blocked and need a pickaxe. |
+| 22 | Gather wood, craft a wooden pickaxe, and walk into a mountain | The marker successfully moves onto the mountain cell. #live reports the movement. |
+| 23 | Walk into a swamp without a silver bucket | The marker flashes red and bumps. #live says you are blocked and need a silver bucket. |
+| 24 | Gather silver from mountains, craft a silver bucket, and walk into a swamp | The marker successfully moves onto the swamp cell. #live reports the movement. |
+| 25 | Gather required materials and craft a thruster | The ending screen is displayed, indicating the game has been won. |

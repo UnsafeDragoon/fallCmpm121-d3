@@ -1,3 +1,22 @@
+# D3 Project
+
+**Target:** Craft a thruster to get off the alien planet.
+
+## How to Play
+
+- **Link:** https://unsafedragoon.github.io/fallCmpm121-d3/
+- **Run Locally:** Run `deno task dev` in the terminal and open the provided localhost URL if it does not open automatically.
+- **Controls:** Use `W, A, S, D` or `Arrow Keys` to move. Press E to gather resources from the tile you are standing on. Click the recipe buttons on the right to craft.
+- **Goal:** Craft a pickaxe to cross the mountains, craft a bucket to cross the swamp, then finally craft a thruster to get off the alien planet.
+
+## How to Add a New Recipe
+
+To add a new recipe to the game, you only need to modify the following files in /core:
+
+1. Open `core/recipes.ts`
+2. Add a new row to the `RECIPES` object, specifying the inputs and how many, and the outputs and how many.
+3. If using new inputs, make sure it is either craftable or gatherable. If adding new drops in a terrain, make sure to update `TerrainDrops` in `core/terrain.ts`.
+
 A game about an astronaut who is stranded on an alien planet with their broken spaceship. They need to collect materials and fuel in order to rebuild their thruster and get off the planet.
 
 # D3 starter
