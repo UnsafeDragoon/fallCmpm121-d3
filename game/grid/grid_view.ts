@@ -11,6 +11,7 @@ const WALK_MS = 120;
 const BUMP_MS = 60;
 const MARKER_COLOR = 0xf5e6a8;
 const BUMP_COLOR = 0xe0533d;
+const COLLECT_COLOR = 0x00FF00;
 
 const TERRAIN_COLORS: Record<Terrain, number> = {
   grass: 0x5d9e4a,
@@ -87,7 +88,7 @@ export class GridView extends Phaser.Scene {
       case "gather":
         this.collectedTiles[`${event.at.x}.${event.at.y}`] = true;
         this.drawCellsAround(event.at);
-        return this.bump(event.at, event.at);
+        return this.collect();
       case "failed-gather":
         return this.bump(event.at, event.at);
       default:
@@ -118,6 +119,23 @@ export class GridView extends Phaser.Scene {
         targets: this.marker,
         x: start.x + (target.x - start.x) * 0.3,
         y: start.y + (target.y - start.y) * 0.3,
+        duration: BUMP_MS,
+        yoyo: true,
+        onComplete: () => {
+          this.marker.setFillStyle(MARKER_COLOR);
+          done();
+        },
+      });
+    });
+  }
+
+  private collect(): Promise<void> {
+    this.marker.setFillStyle(COLLECT_COLOR);
+    return new Promise((done) => {
+      this.tweens.add({
+        targets: this.marker,
+        x: this.marker.x + 1,
+        y: this.marker.y + 1,
         duration: BUMP_MS,
         yoyo: true,
         onComplete: () => {
