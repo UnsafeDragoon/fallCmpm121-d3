@@ -81,3 +81,43 @@ body {
     rgb(0 0 0 / 0.5) 100%
   );
 }
+
+#recipes {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#recipes button {
+  width: 100%;
+  text-align: left;
+  padding: 6px;
+  background: #262a31;
+  color: inherit;
+  border: 1px solid #3a3f48;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#recipes button.craftable {
+  background: #2f6b3a;
+  border-color: #5d9e4a;
+}
+
+#recipes button.uncraftable {
+  background: #262a31;
+  border-color: #3a3f48;
+}
+
+#recipes button.craftable:hover,
+#recipes button.craftable:focus {
+  background: #3a8247;
+}
+
+#recipes button.uncraftable:hover,
+#recipes button.uncraftable:focus {
+  background: #3a3f48;
+}

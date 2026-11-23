@@ -15,9 +15,13 @@ function describe(event: GameEvent): string {
     case "failed-gather":
       return `Did not gather from {${event.at.x}, ${event.at.y}}. ${event.msg}`;
     case "craft":
-      return `Crafted ${event.outputs}`;
-    case "failed-craft":
-      return `Missing ${event.missing} to craft ${event.recipe}`;
+      return `Crafted ${event.recipe}`;
+    case "failed-craft": {
+      const missingStr = Object.entries(event.missing).map(([k, v]) =>
+        `${v} ${k}`
+      ).join(", ");
+      return `Failed to craft ${event.recipe}. Missing: ${missingStr}`;
+    }
   }
 }
 
@@ -36,6 +40,11 @@ export class Hud {
     if (event.type === "moved") this.showPosition(event.to.x, event.to.y);
     if (event.type === "gather") {
       this.updateInventory(event.resource, event.inventory);
+    }
+    if (event.type === "craft") {
+      for (const resource of Object.keys(event.inventory)) {
+        this.updateInventory(resource, event.inventory);
+      }
     }
   }
 

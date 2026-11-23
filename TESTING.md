@@ -23,3 +23,7 @@ For a person, or an agent driving a browser. Run `deno task dev` and open the lo
 | 15 | On a high-resolution display, or at browser zoom 200%     | Grid edges stay sharp. The marker stays centered. Run `document.querySelector("canvas").width`: it is the canvas `clientWidth` times `devicePixelRatio`.    |
 
 | 16 | Gathering (visual and audio) | Plays a beep-like chime after you press 'e' over a non-grayed resource tile. Newly aquired resources pop up on the right hand side while known resources increment.
+| 17 | Gather items and look at the recipe list | The recipe buttons update to show missing requirements. When you have enough materials, the button changes to "Craft [item]". |
+| 18 | Click a craftable recipe button | The marker bumps, a buzzsaw sound plays, the item appears in the inventory, and inputs are deducted. `#live` reports success. |
+| 19 | Click a recipe with missing items | The marker flashes red, a bump sound plays, and `#live` reports the missing items. |
+| 20 | Click a recipe button, then use arrows | The marker moves. The button successfully yielded keyboard focus back to the page. |
