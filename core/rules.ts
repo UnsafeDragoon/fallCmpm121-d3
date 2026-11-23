@@ -4,11 +4,11 @@
 
 import {
   isPassable,
-  Resources,
   type Terrain,
   terrainAt,
-  TerrainResource,
+  TerrainDrops,
 } from "./terrain.ts";
+import { type RecipeRow, RECIPES } from "./recipes.ts";
 
 export type Cell = { x: number; y: number };
 
@@ -31,6 +31,10 @@ export type Command =
   }
   | {
     type: "gather";
+  }
+  | {
+    type: "craft";
+    recipe: string;
   };
 
 // Domain Event: https://martinfowler.com/eaaDev/DomainEvent.html
@@ -39,7 +43,7 @@ export type GameEvent =
   | { type: "blocked"; at: Cell; toward: Cell; terrain: Terrain }
   | {
     type: "gather";
-    resource: Resources;
+    resource: string;
     quantity: number;
     at: Cell;
     inventory: Record<string, number>;
@@ -50,6 +54,17 @@ export type GameEvent =
       | "FAIL: Unknown Tile Resource!"
       | "Already Collected This Tile's Resource!";
     at: Cell;
+  }
+  | {
+    type: "craft";
+    recipe: string;
+    outputs: Record<string, number>;
+    inventory: Record<string, number>;
+  }
+  | {
+    type: "failed-craft";
+    recipe: string;
+    missing: Record<string, number>;
   };
 
 const STEPS: Record<Direction, Cell> = {
@@ -76,6 +91,8 @@ export function apply(state: GameState, command: Command): GameEvent[] {
       return move(state, command.direction);
     case "gather":
       return gather(state);
+    case "craft":
+      return craft(state, command.recipe);
   }
 }
 
@@ -88,7 +105,7 @@ function move(state: GameState, direction: Direction): GameEvent[] {
   const from = { ...state.player };
   const to = { x: from.x + step.x, y: from.y + step.y };
   const terrain = terrainAt(state.seed, to.x, to.y);
-  if (!isPassable(terrain)) {
+  if (!isPassable(terrain, state.inventory)) {
     return [{ type: "blocked", at: from, toward: to, terrain }];
   }
   state.player.x = to.x;
@@ -109,9 +126,9 @@ function gather(state: GameState): GameEvent[] {
   }
 
   const terrain = terrainAt(state.seed, player.x, player.y);
-  const gatheredResource = TerrainResource[terrain];
+  const possibleDrops = TerrainDrops[terrain];
 
-  if (!gatheredResource) {
+  if (!possibleDrops || possibleDrops.length === 0) {
     return [{
       type: "failed-gather",
       msg: "FAIL: Unknown Tile Resource!",
@@ -119,14 +136,67 @@ function gather(state: GameState): GameEvent[] {
     }];
   }
 
+  const roll = Math.random();
+  let cumulativeChance = 0;
+  let gatheredResource = possibleDrops[0].resource;
+
+  for (const drop of possibleDrops) {
+    cumulativeChance += drop.chance;
+    if (roll <= cumulativeChance) {
+      gatheredResource = drop.resource;
+      break;
+    }
+  }
+
   state.collectedTiles[tileKey] = true;
 
-  state.inventory[gatheredResource]++;
+  state.inventory[gatheredResource] = (state.inventory[gatheredResource] || 0) +
+    1;
   return [{
     type: "gather",
     resource: gatheredResource,
     quantity: 1,
     at: player,
+    inventory: { ...state.inventory },
+  }];
+}
+
+export function missingForRecipe(
+  inventory: Record<string, number>,
+  recipe: RecipeRow,
+): Record<string, number> {
+  const missing: Record<string, number> = {};
+  for (const [item, amount] of Object.entries(recipe.inputs)) {
+    const has = inventory[item] || 0;
+    if (has < amount) {
+      missing[item] = amount - has;
+    }
+  }
+  return missing;
+}
+
+function craft(state: GameState, recipeName: string): GameEvent[] {
+  const recipe = RECIPES[recipeName];
+  if (!recipe) {
+    return [{ type: "failed-craft", recipe: recipeName, missing: {} }];
+  }
+
+  const missing = missingForRecipe(state.inventory, recipe);
+  if (Object.keys(missing).length > 0) {
+    return [{ type: "failed-craft", recipe: recipeName, missing }];
+  }
+
+  for (const [item, amount] of Object.entries(recipe.inputs)) {
+    state.inventory[item] -= amount;
+  }
+  for (const [item, amount] of Object.entries(recipe.outputs)) {
+    state.inventory[item] = (state.inventory[item] || 0) + amount;
+  }
+
+  return [{
+    type: "craft",
+    recipe: recipeName,
+    outputs: recipe.outputs,
     inventory: { ...state.inventory },
   }];
 }

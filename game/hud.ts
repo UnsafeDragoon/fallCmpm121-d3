@@ -1,9 +1,4 @@
-import {
-  type GameEvent,
-  type GameState,
-  Resources,
-  terrainAt,
-} from "../core/mod.ts";
+import { type GameEvent, type GameState, terrainAt } from "../core/mod.ts";
 
 function element(id: string): HTMLElement {
   return document.getElementById(id)!;
@@ -19,6 +14,10 @@ function describe(event: GameEvent): string {
       return `Gathered ${event.quantity} ${event.resource} at {${event.at.x}, ${event.at.y}}`;
     case "failed-gather":
       return `Did not gather from {${event.at.x}, ${event.at.y}}. ${event.msg}`;
+    case "craft":
+      return `Crafted ${event.outputs}`;
+    case "failed-craft":
+      return `Missing ${event.missing} to craft ${event.recipe}`;
   }
 }
 
@@ -45,7 +44,7 @@ export class Hud {
     element("terrain").textContent = terrainAt(this.seed, x, y);
   }
 
-  private updateInventory(resource: Resources, inv: Record<Resources, number>) {
+  private updateInventory(resource: string, inv: Record<string, number>) {
     const invUI = element("inventory");
     if (!invUI) {
       throw new Error("Error: Unable to retrive inventory HTML element.");

@@ -1,15 +1,25 @@
 // The world is a pure function of a seed and coordinates. Nothing here is stored,
 // so the world can be effectively unbounded while saved state stays small.
 
-export type Terrain = "grass" | "forest" | "water" | "rock";
+export type Terrain = "forest" | "mountain" | "crater" | "swamp";
 
-export type Resources = "dirt" | "wood" | "water" | "stone";
+export type Drop = { resource: string; chance: number };
 
-export const TerrainResource: Record<Terrain, Resources> = {
-  grass: "dirt",
-  forest: "wood",
-  water: "water",
-  rock: "stone",
+export const TerrainDrops: Record<Terrain, Drop[]> = {
+  forest: [
+    { resource: "wood", chance: 1.0 },
+  ],
+  mountain: [
+    { resource: "stone", chance: 0.9 },
+    { resource: "silver", chance: 0.1 },
+  ],
+  crater: [
+    { resource: "stone", chance: 0.5 },
+    { resource: "silver", chance: 0.5 },
+  ],
+  swamp: [
+    { resource: "goop", chance: 1.0 },
+  ],
 };
 
 export function terrainAt(seed: number, x: number, y: number): Terrain {
@@ -17,13 +27,23 @@ export function terrainAt(seed: number, x: number, y: number): Terrain {
   // Every game starts at the origin, so flatten the land there. Otherwise some
   // seeds would start inside a lake or walled into a pocket.
   const height = 0.5 + (raw - 0.5) * Math.min(1, Math.hypot(x, y) / 10);
-  if (height < 0.3) return "water";
-  if (height > 0.7) return "rock";
-  return noise(seed + 2, x, y, 6) < 0.45 ? "forest" : "grass";
+  if (height < 0.3) return "swamp";
+  if (height > 0.7) return "crater";
+  return noise(seed + 2, x, y, 6) < 0.45 ? "forest" : "mountain";
 }
 
-export function isPassable(terrain: Terrain): boolean {
-  return terrain !== "water" && terrain !== "rock";
+export function isPassable(
+  terrain: Terrain,
+  inventory: Record<string, number>,
+): boolean {
+  if (terrain === "mountain") {
+    return (inventory.wooden_pickaxe || 0) > 0 ||
+      (inventory.stone_pickaxe || 0) > 0;
+  }
+  if (terrain === "swamp") {
+    return (inventory.silver_bucket || 0) > 0;
+  }
+  return true;
 }
 
 // Value noise: random numbers at coarse grid points, blended between them, so
