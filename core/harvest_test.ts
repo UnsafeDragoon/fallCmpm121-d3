@@ -82,7 +82,7 @@ Deno.test("event keeps its cells while state moves on", () => {
   state.player = cellOfTerrain("mountain");
   apply(state, { type: "gather" });
 
-  assertEquals(state.inventory.stone, 1);
+  assertEquals(state.inventory.silver, 1);
 
   assertEquals(keptEvent, {
     type: "gather",

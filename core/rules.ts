@@ -146,7 +146,7 @@ function gather(state: GameState): GameEvent[] {
     }];
   }
 
-  const roll = Math.random();
+  const roll = tileRoll(state.seed, player.x, player.y);
   let cumulativeChance = 0;
   let gatheredResource = possibleDrops[0].resource;
 
@@ -221,4 +221,12 @@ function craft(state: GameState, recipeName: string): GameEvent[] {
   }
 
   return events;
+}
+
+function tileRoll(seed: number, x: number, y: number): number {
+  let hash = Math.imul(seed + 999, 0x9e3779b1) ^ Math.imul(x, 0x85ebca6b) ^
+    Math.imul(y, 0xc2b2ae35);
+  hash = Math.imul(hash ^ (hash >>> 15), 0x2c1b3c6d);
+  hash = Math.imul(hash ^ (hash >>> 12), 0x297a2d39);
+  return ((hash ^ (hash >>> 15)) >>> 0) / 2 ** 32;
 }
